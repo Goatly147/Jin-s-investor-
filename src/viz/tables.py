@@ -3,7 +3,7 @@
 import pandas as pd
 
 
-def style_sector_table(df: pd.DataFrame) -> pd.io.formats.style.Styler:
+def style_sector_table(df: pd.DataFrame):
     fmt = {
         "수익률(%)": "{:+.2f}",
         "현재 PER": "{:.1f}",
