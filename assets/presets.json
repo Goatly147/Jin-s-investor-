@@ -1,0 +1,12 @@
+{
+  "_comment": "사용자가 자유롭게 편집 가능한 프리셋 날짜. 하드코딩된 전쟁 발발일 없음.",
+  "_format": "label(한글) -> ISO 날짜 또는 null(사용자 지정)",
+  "presets": {
+    "최근 30일": null,
+    "최근 90일": null,
+    "올해 누적 (YTD)": null,
+    "최근 1년": null,
+    "사용자 지정": null
+  },
+  "notes": "현재 src/config.py가 동적으로 계산합니다. 특정 날짜를 고정하려면 ISO 형식(YYYY-MM-DD)으로 값을 채우고 src/config.py:preset_dates()를 수정하세요."
+}
