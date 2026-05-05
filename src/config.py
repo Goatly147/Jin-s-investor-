@@ -9,8 +9,17 @@ import streamlit as st
 from src.utils.i18n import t
 
 SECTOR_TICKERS: Tuple[str, ...] = (
-    "XLK", "XLV", "XLF", "XLY", "XLI",
-    "XLP", "XLE", "XLU", "XLB", "XLRE", "XLC",
+    "XLE",   # 10 에너지
+    "XLB",   # 15 소재
+    "XLI",   # 20 산업재
+    "XLY",   # 25 임의소비재
+    "XLP",   # 30 필수소비재
+    "XLV",   # 35 헬스케어
+    "XLF",   # 40 금융
+    "XLK",   # 45 기술
+    "XLC",   # 50 커뮤니케이션
+    "XLU",   # 55 유틸리티
+    "XLRE",  # 60 부동산
 )
 
 INDEX_TICKERS = {

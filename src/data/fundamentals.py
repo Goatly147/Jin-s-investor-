@@ -47,7 +47,10 @@ def sector_snapshot(tickers: Tuple[str, ...], event_date: date, end_date: date) 
             row["현재 EPS"] = float(eps)
         rows.append(row)
 
-    return pd.DataFrame(rows)[["섹터", "티커", "수익률(%)", "현재 PER", "현재 EPS", "현재가"]]
+    out = pd.DataFrame(rows)[["섹터", "티커", "수익률(%)", "현재 PER", "현재 EPS", "현재가"]]
+    for col in ("수익률(%)", "현재 PER", "현재 EPS", "현재가"):
+        out[col] = pd.to_numeric(out[col], errors="coerce")
+    return out
 
 
 @st.cache_data(ttl=86400, show_spinner=False)

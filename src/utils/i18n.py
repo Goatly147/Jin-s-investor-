@@ -35,18 +35,20 @@ LABELS = {
     "fact_caveat": "본 대시보드는 특정 분쟁의 발발 시점을 단정하지 않습니다. 사용자가 지정한 날짜를 기준으로 분석되며, 뉴스는 GDELT 실시간 데이터에 의해 자동 수집됩니다.",
 }
 
+# SPDR Select Sector ETFs (State Street Global Advisors)
+# 정렬: GICS 섹터 코드 순 (10 에너지 → 60 부동산)
 SECTOR_KO = {
-    "XLK": "기술",
-    "XLV": "헬스케어",
-    "XLF": "금융",
-    "XLY": "임의소비재",
-    "XLI": "산업재",
-    "XLP": "필수소비재",
-    "XLE": "에너지",
-    "XLU": "유틸리티",
-    "XLB": "소재",
-    "XLRE": "부동산",
-    "XLC": "커뮤니케이션",
+    "XLE": "에너지",            # 10 — Energy Select Sector SPDR Fund
+    "XLB": "소재",              # 15 — Materials Select Sector SPDR Fund
+    "XLI": "산업재",            # 20 — Industrial Select Sector SPDR Fund
+    "XLY": "임의소비재",         # 25 — Consumer Discretionary Select Sector SPDR Fund
+    "XLP": "필수소비재",         # 30 — Consumer Staples Select Sector SPDR Fund
+    "XLV": "헬스케어",          # 35 — Health Care Select Sector SPDR Fund
+    "XLF": "금융",              # 40 — Financial Select Sector SPDR Fund
+    "XLK": "기술",              # 45 — Technology Select Sector SPDR Fund
+    "XLC": "커뮤니케이션",       # 50 — Communication Services Select Sector SPDR Fund
+    "XLU": "유틸리티",          # 55 — Utilities Select Sector SPDR Fund
+    "XLRE": "부동산",           # 60 — Real Estate Select Sector SPDR Fund
 }
 
 
