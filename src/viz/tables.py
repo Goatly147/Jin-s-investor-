@@ -23,5 +23,5 @@ def style_sector_table(df: pd.DataFrame):
 
     styler = df.style.format(fmt, na_rep="—")
     if "수익률(%)" in df.columns:
-        styler = styler.applymap(color_returns, subset=["수익률(%)"])
+        styler = styler.map(color_returns, subset=["수익률(%)"])
     return styler
