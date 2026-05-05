@@ -24,7 +24,9 @@ def _volume_chart(vol: pd.Series, escalations: list) -> go.Figure:
         fig.add_hline(y=mean, line=dict(color="#A8A8A8", dash="dot"),
                       annotation_text=f"평균 {mean:.0f}", annotation_position="top left")
     for d in escalations:
-        fig.add_vline(x=pd.Timestamp(d),
+        ts = pd.Timestamp(d)
+        fig.add_shape(type="line", xref="x", yref="paper",
+                      x0=ts, x1=ts, y0=0, y1=1,
                       line=dict(color=COLOR_PRIMARY, width=1.5, dash="dot"),
                       opacity=0.7)
     fig.update_layout(

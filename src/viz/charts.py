@@ -15,21 +15,30 @@ COLOR_NEGATIVE = "#E63946"
 COLOR_NEUTRAL = "#A8A8A8"
 
 
+def _vline_at_date(fig: go.Figure, d, color: str, width: float, dash: str,
+                   opacity: float = 1.0, label: Optional[str] = None) -> None:
+    """add_shape + add_annotation 분리 — Plotly 6.x + pandas 3.x에서 add_vline 결합 버그 회피."""
+    ts = pd.Timestamp(d)
+    fig.add_shape(
+        type="line", xref="x", yref="paper",
+        x0=ts, x1=ts, y0=0, y1=1,
+        line=dict(color=color, width=width, dash=dash),
+        opacity=opacity,
+    )
+    if label:
+        fig.add_annotation(
+            x=ts, y=1, xref="x", yref="paper",
+            text=label, showarrow=False,
+            xanchor="left", yanchor="bottom",
+            font=dict(color=color, size=11),
+        )
+
+
 def _add_event_lines(fig: go.Figure, anchor: Optional[date], escalations: Iterable[date]) -> None:
     if anchor is not None:
-        fig.add_vline(
-            x=pd.Timestamp(anchor),
-            line=dict(color=COLOR_PRIMARY, width=2, dash="dash"),
-            annotation_text="발발일",
-            annotation_position="top left",
-            annotation_font_color=COLOR_PRIMARY,
-        )
+        _vline_at_date(fig, anchor, COLOR_PRIMARY, 2, "dash", label="발발일")
     for d in escalations or []:
-        fig.add_vline(
-            x=pd.Timestamp(d),
-            line=dict(color="#F4A261", width=1, dash="dot"),
-            opacity=0.6,
-        )
+        _vline_at_date(fig, d, "#F4A261", 1, "dot", opacity=0.6)
 
 
 def price_with_events(
