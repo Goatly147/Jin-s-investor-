@@ -1,5 +1,6 @@
 """Jin's Investor — 홈 페이지."""
 
+import pandas as pd
 import streamlit as st
 
 from src.config import (
@@ -27,7 +28,7 @@ def _pct(close_df, ticker, anchor):
     s = close_df[ticker].dropna()
     if s.empty:
         return None
-    pos = s.index.searchsorted(anchor)
+    pos = s.index.searchsorted(pd.Timestamp(anchor))
     if pos >= len(s):
         return None
     base = s.iloc[pos]
