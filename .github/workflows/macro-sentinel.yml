@@ -1,0 +1,66 @@
+name: Macro Sentinel Daily
+
+on:
+  schedule:
+    # 23:00 UTC = 08:00 KST (next day). Adjust if you want a different time.
+    # NOTE: GitHub Actions schedules only run on the default branch, and may
+    # be delayed by several minutes during peak load.
+    - cron: "0 23 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: macro-sentinel
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: tools/macro_sentinel/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r tools/macro_sentinel/requirements.txt
+
+      - name: Run Macro Sentinel
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        working-directory: tools/macro_sentinel
+        run: python macro_sentinel.py
+
+      - name: Upload report as workflow artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macro-report
+          path: tools/macro_sentinel/reports/
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Commit report back to branch
+        if: success()
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/macro_sentinel/reports/
+          if git diff --cached --quiet; then
+            echo "No new report to commit."
+            exit 0
+          fi
+          git commit -m "macro sentinel: $(date -u +%Y-%m-%d) report"
+          git push origin HEAD:${GITHUB_REF_NAME}
