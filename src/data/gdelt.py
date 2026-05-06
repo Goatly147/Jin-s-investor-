@@ -2,9 +2,9 @@
 
 import hashlib
 import re
+import time
 from datetime import date, datetime, timedelta, timezone
-from typing import List
-from urllib.parse import urlencode
+from typing import List, Optional, Tuple
 
 import pandas as pd
 import streamlit as st
@@ -28,6 +28,9 @@ QUERY_KO = (
 
 _PUNCT = re.compile(r"[^\w\s]", flags=re.UNICODE)
 
+# 진단을 위한 마지막 호출 메타데이터 (페이지에서 expander로 노출)
+_DIAG: List[dict] = []
+
 
 def _normalize(title: str) -> str:
     return _PUNCT.sub("", (title or "").lower()).strip()
@@ -41,7 +44,14 @@ def _fmt(dt: datetime) -> str:
     return dt.strftime("%Y%m%d%H%M%S")
 
 
-def _fetch_window(query: str, start: datetime, end: datetime, max_records: int = 250) -> pd.DataFrame:
+def _fetch_window(
+    query: str,
+    start: datetime,
+    end: datetime,
+    max_records: int = 250,
+    sort: str = "DateDesc",
+) -> Tuple[pd.DataFrame, Optional[str]]:
+    """단일 윈도우 호출. (DataFrame, error_message_or_None) 반환."""
     params = {
         "query": query,
         "mode": "ArtList",
@@ -49,31 +59,45 @@ def _fetch_window(query: str, start: datetime, end: datetime, max_records: int =
         "startdatetime": _fmt(start),
         "enddatetime": _fmt(end),
         "maxrecords": max_records,
-        "sort": "HybridRel",
+        "sort": sort,
     }
-    safe_chars = ':()" '
-    url = f"{GDELT_DOC_URL}?{urlencode(params, safe=safe_chars)}"
     sess = get_session()
     try:
-        resp = sess.get(url, timeout=30)
-        if resp.status_code != 200:
-            return pd.DataFrame()
-        try:
-            payload = resp.json()
-        except ValueError:
-            return pd.DataFrame()
-    except Exception:
-        return pd.DataFrame()
+        # requests가 자동으로 RFC 3986 인코딩 처리 — 수동 urlencode보다 안전
+        resp = sess.get(GDELT_DOC_URL, params=params, timeout=30)
+    except Exception as e:
+        return pd.DataFrame(), f"network: {type(e).__name__}: {str(e)[:120]}"
 
-    arts = payload.get("articles", []) if isinstance(payload, dict) else []
+    if resp.status_code != 200:
+        snippet = (resp.text or "")[:160]
+        return pd.DataFrame(), f"HTTP {resp.status_code}: {snippet}"
+
+    body = (resp.text or "").strip()
+    if not body:
+        return pd.DataFrame(), "empty body"
+    if not body.startswith("{") and not body.startswith("["):
+        return pd.DataFrame(), f"non-JSON: {body[:160]}"
+
+    try:
+        payload = resp.json()
+    except ValueError as e:
+        return pd.DataFrame(), f"JSON parse: {str(e)[:80]}"
+
+    if not isinstance(payload, dict):
+        return pd.DataFrame(), f"unexpected payload type: {type(payload).__name__}"
+
+    arts = payload.get("articles", [])
     if not arts:
-        return pd.DataFrame()
+        return pd.DataFrame(), None  # 빈 결과는 정상 — 그 윈도우엔 기사가 없음
 
     rows = []
     for a in arts:
         seen = a.get("seendate")
         try:
-            seen_dt = datetime.strptime(seen, "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc) if seen else None
+            seen_dt = (
+                datetime.strptime(seen, "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc)
+                if seen else None
+            )
         except ValueError:
             seen_dt = None
         rows.append({
@@ -86,32 +110,55 @@ def _fetch_window(query: str, start: datetime, end: datetime, max_records: int =
             "sourcecountry": a.get("sourcecountry"),
             "image": a.get("socialimage"),
         })
-    return pd.DataFrame(rows)
+    return pd.DataFrame(rows), None
 
 
 @st.cache_data(ttl=1800, show_spinner=False)
-def fetch_articles(start: date, end: date, include_korean: bool = True) -> pd.DataFrame:
-    """기간 내 미-이란 분쟁 기사 수집 — 24h 슬라이딩 윈도우로 페이지네이션."""
+def fetch_articles(
+    start: date,
+    end: date,
+    include_korean: bool = True,
+    window_days: int = 7,
+) -> Tuple[pd.DataFrame, List[dict]]:
+    """기간 내 미-이란 분쟁 기사 수집.
+
+    7일 슬라이딩 윈도우로 페이지네이션 — 90일 기준 영문 13회 + 한국어 13회 호출.
+    GDELT의 비공식 레이트 제한(약 5초당 1건) 회피를 위해 호출 간 0.3s sleep.
+
+    Returns:
+        (articles_df, diagnostics) — 각 호출의 결과·에러 메타데이터 포함.
+    """
     if end < start:
-        return pd.DataFrame()
+        return pd.DataFrame(), [{"error": "end < start"}]
 
     parts: List[pd.DataFrame] = []
+    diag: List[dict] = []
     cursor = datetime.combine(start, datetime.min.time(), tzinfo=timezone.utc)
     end_dt = datetime.combine(end, datetime.max.time(), tzinfo=timezone.utc)
 
     while cursor < end_dt:
-        window_end = min(cursor + timedelta(days=1), end_dt)
-        parts.append(_fetch_window(QUERY_EN, cursor, window_end, max_records=250))
+        window_end = min(cursor + timedelta(days=window_days), end_dt)
+        calls = [("en", QUERY_EN)]
         if include_korean:
-            parts.append(_fetch_window(QUERY_KO, cursor, window_end, max_records=250))
+            calls.append(("ko", QUERY_KO))
+        for lang_code, q in calls:
+            df, err = _fetch_window(q, cursor, window_end)
+            diag.append({
+                "lang": lang_code,
+                "start": cursor.strftime("%Y-%m-%d"),
+                "end": window_end.strftime("%Y-%m-%d"),
+                "rows": int(df.shape[0]),
+                "error": err,
+            })
+            if not df.empty:
+                parts.append(df)
+            time.sleep(0.3)  # 레이트 제한 회피
         cursor = window_end
 
     if not parts:
-        return pd.DataFrame()
-    df = pd.concat([p for p in parts if not p.empty], ignore_index=True) if any(not p.empty for p in parts) else pd.DataFrame()
-    if df.empty:
-        return df
-    return _dedupe(df)
+        return pd.DataFrame(), diag
+    df = pd.concat(parts, ignore_index=True)
+    return _dedupe(df), diag
 
 
 def _dedupe(df: pd.DataFrame) -> pd.DataFrame:

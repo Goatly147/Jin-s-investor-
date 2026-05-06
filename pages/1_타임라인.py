@@ -51,10 +51,24 @@ def main():
         max_per_day = st.number_input("하루당 최대 노출 기사", 1, 20, 5)
 
     with st.spinner(t("loading")):
-        df = fetch_articles(cfg.event_date, cfg.end_date, include_korean=include_kor)
+        df, diag = fetch_articles(cfg.event_date, cfg.end_date, include_korean=include_kor)
 
     if df.empty:
-        st.warning("기사를 가져오지 못했습니다. 기간을 늘리거나 한국어 옵션을 끄고 다시 시도하세요.")
+        st.warning("기사를 가져오지 못했습니다. 아래 진단 정보로 원인을 확인하세요.")
+        with st.expander("진단 정보 (호출별 상태)", expanded=True):
+            errors = [d for d in diag if d.get("error")]
+            if errors:
+                st.error(f"에러 {len(errors)}건 / 총 호출 {len(diag)}건")
+                err_df = pd.DataFrame(errors)
+                st.dataframe(err_df, use_container_width=True, hide_index=True)
+            else:
+                st.info("에러는 없지만 모든 윈도우에서 0건 반환됐습니다 — GDELT 인덱스에 해당 기간·쿼리에 매칭되는 기사가 없거나, 쿼리가 너무 좁습니다.")
+                st.dataframe(pd.DataFrame(diag), use_container_width=True, hide_index=True)
+            st.caption(
+                "흔한 원인: (1) GDELT 레이트 제한 — 잠시 후 '데이터 새로고침' 클릭. "
+                "(2) 쿼리가 GDELT 인덱스 기준으로 너무 좁음 — 발발일 기간을 넓히세요. "
+                "(3) Streamlit Cloud 출구 IP가 GDELT에 의해 일시적으로 차단."
+            )
         return
 
     vol = daily_volume(df)
