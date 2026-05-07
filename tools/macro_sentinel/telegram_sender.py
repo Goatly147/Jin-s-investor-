@@ -13,10 +13,10 @@ TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 SIGNAL_MARK = {
-    "BULLISH": "[+]",
-    "BEARISH": "[-]",
-    "CAUTION": "[!]",
-    "NEUTRAL": "[~]",
+    "BULLISH": "🟢",
+    "BEARISH": "🔴",
+    "CAUTION": "🟡",
+    "NEUTRAL": "⚪",
 }
 
 
@@ -57,14 +57,15 @@ def format_macro_summary(indicators: dict, fear_greed: dict, date_str: str) -> s
         counts[sig] = counts.get(sig, 0) + 1
 
     overall = _decide_overall(counts)
+    overall_mark = SIGNAL_MARK.get(overall, "⚪")
     lines = [
-        f"<b>Macro Sentinel - {date_str}</b>",
-        f"Overall: <b>{overall}</b>",
-        f"Bull {counts['BULLISH']} | Caution {counts['CAUTION']} | Bear {counts['BEARISH']} | Neutral {counts['NEUTRAL']}",
+        f"📊 <b>MACRO SENTINEL - {date_str}</b>",
+        f"Overall: {overall_mark} <b>{overall}</b>",
+        f"🟢{counts['BULLISH']} 🟡{counts['CAUTION']} 🔴{counts['BEARISH']} ⚪{counts['NEUTRAL']}",
         "",
     ]
     for name, data in indicators.items():
-        mark = SIGNAL_MARK.get(data.get("signal", "NEUTRAL"), "[?]")
+        mark = SIGNAL_MARK.get(data.get("signal", "NEUTRAL"), "⚪")
         detail = str(data.get("detail", ""))
         if len(detail) > 160:
             detail = detail[:157] + "..."
