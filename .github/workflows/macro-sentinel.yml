@@ -2,10 +2,10 @@ name: Macro Sentinel Daily
 
 on:
   schedule:
-    # 23:00 UTC = 08:00 KST (next day). Adjust if you want a different time.
+    # 22:00 UTC = 07:00 KST (next day). Adjust if you want a different time.
     # NOTE: GitHub Actions schedules only run on the default branch, and may
     # be delayed by several minutes during peak load.
-    - cron: "0 23 * * *"
+    - cron: "0 22 * * *"
   workflow_dispatch: {}
   # Trigger when this workflow file itself changes, so updates apply immediately
   # and the workflow registers in the GitHub Actions UI.
