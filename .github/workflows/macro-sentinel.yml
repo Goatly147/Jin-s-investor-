@@ -69,4 +69,16 @@ jobs:
             exit 0
           fi
           git commit -m "macro sentinel: $(date -u +%Y-%m-%d) report"
-          git push origin HEAD:${GITHUB_REF_NAME}
+          # Rebase on top of any concurrent main updates, then push.
+          # Retry up to 3 times to survive transient races.
+          for attempt in 1 2 3; do
+            git fetch origin "${GITHUB_REF_NAME}"
+            git rebase "origin/${GITHUB_REF_NAME}" || { git rebase --abort; exit 1; }
+            if git push origin HEAD:"${GITHUB_REF_NAME}"; then
+              exit 0
+            fi
+            echo "Push attempt ${attempt} rejected; retrying after fetch/rebase."
+            sleep 2
+          done
+          echo "Push failed after retries."
+          exit 1
