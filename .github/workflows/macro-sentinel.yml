@@ -1,5 +1,7 @@
 name: Macro Sentinel Daily
 
+# Re-saved to nudge GitHub Actions workflow registration.
+
 on:
   schedule:
     # 23:00 UTC = 08:00 KST (next day). Adjust if you want a different time.
