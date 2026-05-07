@@ -1,7 +1,5 @@
 name: Macro Sentinel Daily
 
-# Re-saved to nudge GitHub Actions workflow registration.
-
 on:
   schedule:
     # 23:00 UTC = 08:00 KST (next day). Adjust if you want a different time.
@@ -9,6 +7,12 @@ on:
     # be delayed by several minutes during peak load.
     - cron: "0 23 * * *"
   workflow_dispatch: {}
+  # Trigger when this workflow file itself changes, so updates apply immediately
+  # and the workflow registers in the GitHub Actions UI.
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/macro-sentinel.yml"
 
 permissions:
   contents: write
