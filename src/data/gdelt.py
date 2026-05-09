@@ -14,15 +14,16 @@ from src.utils.cache import get_session
 GDELT_DOC_URL = "https://api.gdeltproject.org/api/v2/doc/doc"
 
 # 분쟁 보도 surface 쿼리 — 영문/한국어 별도 호출 후 병합
+# GDELT 파서 규칙: 괄호는 OR 그룹에만 허용, 단일 항목·AND 그룹은 괄호 없이 작성해야 함.
 QUERY_EN = (
-    '(sourcelang:eng) AND ("United States" OR US OR "U.S.") '
+    'sourcelang:eng AND ("United States" OR US OR "U.S.") '
     'AND (Iran OR Tehran OR Iranian) '
     'AND (theme:ARMEDCONFLICT OR theme:CRISISLEX_CRISISLEXREC OR theme:KILL '
     'OR theme:WB_840_CONFLICT_AND_FRAGILITY OR theme:TAX_MILITARY_TITLES)'
 )
 
 QUERY_KO = (
-    '(sourcelang:kor) AND (미국 OR 미군) AND (이란 OR 테헤란) '
+    'sourcelang:kor AND (미국 OR 미군) AND (이란 OR 테헤란) '
     'AND (theme:ARMEDCONFLICT OR theme:CRISISLEX_CRISISLEXREC OR theme:KILL)'
 )
 
@@ -118,17 +119,16 @@ def fetch_articles_v2(
     start: date,
     end: date,
     include_korean: bool = True,
-    window_days: int = 7,
+    window_days: int = 30,
 ) -> Tuple[pd.DataFrame, List[dict]]:
     """기간 내 미-이란 분쟁 기사 수집.
 
-    7일 슬라이딩 윈도우로 페이지네이션 — 90일 기준 영문 13회 + 한국어 13회 호출.
-    GDELT의 비공식 레이트 제한(약 5초당 1건) 회피를 위해 호출 간 0.3s sleep.
+    30일 슬라이딩 윈도우로 페이지네이션 — 90일 기준 영문 3회 + 한국어 3회 = 6회 호출.
+    GDELT 하드 레이트(5초당 1건)를 만족하기 위해 호출 간 6s sleep.
+    캐시 TTL 30분으로 첫 로드만 ~36s 소요, 이후 30분간 즉시 응답.
 
     Returns:
         (articles_df, diagnostics) — 각 호출의 결과·에러 메타데이터 포함.
-
-    Note: v2 — 이전 버전(단일 DataFrame 반환)과 캐시 키 분리.
     """
     if end < start:
         return pd.DataFrame(), [{"error": "end < start"}]
@@ -154,7 +154,7 @@ def fetch_articles_v2(
             })
             if not df.empty:
                 parts.append(df)
-            time.sleep(0.3)  # 레이트 제한 회피
+            time.sleep(6.0)  # GDELT 하드 레이트 제한 — 5초당 1건 (margin 1초)
         cursor = window_end
 
     if not parts:
