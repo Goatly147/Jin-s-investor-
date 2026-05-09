@@ -14,16 +14,21 @@ from src.utils.cache import get_session
 GDELT_DOC_URL = "https://api.gdeltproject.org/api/v2/doc/doc"
 
 # 분쟁 보도 surface 쿼리 — 영문/한국어 별도 호출 후 병합
-# GDELT 파서 규칙: 괄호는 OR 그룹에만 허용, 단일 항목·AND 그룹은 괄호 없이 작성해야 함.
+# GDELT 파서 규칙:
+#   (1) 괄호는 OR 그룹에만 허용, 단일 항목·AND 그룹은 괄호 없이 작성
+#   (2) 모든 검색어는 최소 3자 이상 (US/미국/미군/이란 모두 2자라 거부됨)
+#       → 3자+ 동의어 또는 phrase로 우회
 QUERY_EN = (
-    'sourcelang:eng AND ("United States" OR US OR "U.S.") '
+    'sourcelang:eng AND "United States" '
     'AND (Iran OR Tehran OR Iranian) '
     'AND (theme:ARMEDCONFLICT OR theme:CRISISLEX_CRISISLEXREC OR theme:KILL '
     'OR theme:WB_840_CONFLICT_AND_FRAGILITY OR theme:TAX_MILITARY_TITLES)'
 )
 
+# 한국어 2자 단어(미국/미군/이란)는 GDELT가 거부 → 3자 이상의 동의어로 surface
+# 이란인(이란 사람), 테헤란(수도), 페르시아(국가 별칭) 등 활용
 QUERY_KO = (
-    'sourcelang:kor AND (미국 OR 미군) AND (이란 OR 테헤란) '
+    'sourcelang:kor AND (테헤란 OR 이란인 OR 페르시아) '
     'AND (theme:ARMEDCONFLICT OR theme:CRISISLEX_CRISISLEXREC OR theme:KILL)'
 )
 
