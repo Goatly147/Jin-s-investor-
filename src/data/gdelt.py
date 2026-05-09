@@ -29,8 +29,9 @@ QUERY_KO = (
 
 _PUNCT = re.compile(r"[^\w\s]", flags=re.UNICODE)
 
-# 진단을 위한 마지막 호출 메타데이터 (페이지에서 expander로 노출)
-_DIAG: List[dict] = []
+# 429 백오프 — Streamlit Cloud 공유 IP 풀에서 레이트 제한이 걸릴 경우 재시도
+_BACKOFF_SECONDS = 35
+_MAX_RETRIES = 2
 
 
 def _normalize(title: str) -> str:
@@ -52,7 +53,7 @@ def _fetch_window(
     max_records: int = 250,
     sort: str = "DateDesc",
 ) -> Tuple[pd.DataFrame, Optional[str]]:
-    """단일 윈도우 호출. (DataFrame, error_message_or_None) 반환."""
+    """단일 윈도우 호출. 429 시 35s 백오프 후 최대 2회 재시도. (DataFrame, error_or_None) 반환."""
     params = {
         "query": query,
         "mode": "ArtList",
@@ -63,55 +64,65 @@ def _fetch_window(
         "sort": sort,
     }
     sess = get_session()
-    try:
-        # requests가 자동으로 RFC 3986 인코딩 처리 — 수동 urlencode보다 안전
-        resp = sess.get(GDELT_DOC_URL, params=params, timeout=30)
-    except Exception as e:
-        return pd.DataFrame(), f"network: {type(e).__name__}: {str(e)[:120]}"
 
-    if resp.status_code != 200:
-        snippet = (resp.text or "")[:160]
-        return pd.DataFrame(), f"HTTP {resp.status_code}: {snippet}"
-
-    body = (resp.text or "").strip()
-    if not body:
-        return pd.DataFrame(), "empty body"
-    if not body.startswith("{") and not body.startswith("["):
-        return pd.DataFrame(), f"non-JSON: {body[:160]}"
-
-    try:
-        payload = resp.json()
-    except ValueError as e:
-        return pd.DataFrame(), f"JSON parse: {str(e)[:80]}"
-
-    if not isinstance(payload, dict):
-        return pd.DataFrame(), f"unexpected payload type: {type(payload).__name__}"
-
-    arts = payload.get("articles", [])
-    if not arts:
-        return pd.DataFrame(), None  # 빈 결과는 정상 — 그 윈도우엔 기사가 없음
-
-    rows = []
-    for a in arts:
-        seen = a.get("seendate")
+    for attempt in range(_MAX_RETRIES + 1):
         try:
-            seen_dt = (
-                datetime.strptime(seen, "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc)
-                if seen else None
-            )
-        except ValueError:
-            seen_dt = None
-        rows.append({
-            "datetime": seen_dt,
-            "date": seen_dt.date() if seen_dt else None,
-            "title": a.get("title"),
-            "url": a.get("url"),
-            "domain": a.get("domain"),
-            "language": a.get("language"),
-            "sourcecountry": a.get("sourcecountry"),
-            "image": a.get("socialimage"),
-        })
-    return pd.DataFrame(rows), None
+            # requests가 자동으로 RFC 3986 인코딩 처리 — 수동 urlencode보다 안전
+            resp = sess.get(GDELT_DOC_URL, params=params, timeout=30)
+        except Exception as e:
+            return pd.DataFrame(), f"network: {type(e).__name__}: {str(e)[:120]}"
+
+        if resp.status_code == 429:
+            if attempt < _MAX_RETRIES:
+                time.sleep(_BACKOFF_SECONDS)
+                continue
+            return pd.DataFrame(), f"HTTP 429: 레이트 제한 — {_MAX_RETRIES}회 재시도 후 실패"
+
+        if resp.status_code != 200:
+            snippet = (resp.text or "")[:160]
+            return pd.DataFrame(), f"HTTP {resp.status_code}: {snippet}"
+
+        body = (resp.text or "").strip()
+        if not body:
+            return pd.DataFrame(), "empty body"
+        if not body.startswith("{") and not body.startswith("["):
+            return pd.DataFrame(), f"non-JSON: {body[:160]}"
+
+        try:
+            payload = resp.json()
+        except ValueError as e:
+            return pd.DataFrame(), f"JSON parse: {str(e)[:80]}"
+
+        if not isinstance(payload, dict):
+            return pd.DataFrame(), f"unexpected payload type: {type(payload).__name__}"
+
+        arts = payload.get("articles", [])
+        if not arts:
+            return pd.DataFrame(), None  # 빈 결과는 정상 — 그 윈도우엔 기사가 없음
+
+        rows = []
+        for a in arts:
+            seen = a.get("seendate")
+            try:
+                seen_dt = (
+                    datetime.strptime(seen, "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc)
+                    if seen else None
+                )
+            except ValueError:
+                seen_dt = None
+            rows.append({
+                "datetime": seen_dt,
+                "date": seen_dt.date() if seen_dt else None,
+                "title": a.get("title"),
+                "url": a.get("url"),
+                "domain": a.get("domain"),
+                "language": a.get("language"),
+                "sourcecountry": a.get("sourcecountry"),
+                "image": a.get("socialimage"),
+            })
+        return pd.DataFrame(rows), None
+
+    return pd.DataFrame(), "exhausted retry loop"
 
 
 @st.cache_data(ttl=1800, show_spinner=False)
@@ -124,8 +135,9 @@ def fetch_articles_v2(
     """기간 내 미-이란 분쟁 기사 수집.
 
     30일 슬라이딩 윈도우로 페이지네이션 — 90일 기준 영문 3회 + 한국어 3회 = 6회 호출.
-    GDELT 하드 레이트(5초당 1건)를 만족하기 위해 호출 간 6s sleep.
-    캐시 TTL 30분으로 첫 로드만 ~36s 소요, 이후 30분간 즉시 응답.
+    GDELT 하드 레이트(5초당 1건)를 만족하기 위해 호출 간 7s sleep.
+    429 수신 시 35s 백오프 후 최대 2회 재시도.
+    캐시 TTL 30분으로 첫 로드만 ~42s 소요, 이후 30분간 즉시 응답.
 
     Returns:
         (articles_df, diagnostics) — 각 호출의 결과·에러 메타데이터 포함.
@@ -154,7 +166,7 @@ def fetch_articles_v2(
             })
             if not df.empty:
                 parts.append(df)
-            time.sleep(6.0)  # GDELT 하드 레이트 제한 — 5초당 1건 (margin 1초)
+            time.sleep(7.0)  # GDELT 하드 레이트 제한 — 5초당 1건 (margin 2초)
         cursor = window_end
 
     if not parts:
