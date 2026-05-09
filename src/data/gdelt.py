@@ -114,7 +114,7 @@ def _fetch_window(
 
 
 @st.cache_data(ttl=1800, show_spinner=False)
-def fetch_articles(
+def fetch_articles_v2(
     start: date,
     end: date,
     include_korean: bool = True,
@@ -127,6 +127,8 @@ def fetch_articles(
 
     Returns:
         (articles_df, diagnostics) — 각 호출의 결과·에러 메타데이터 포함.
+
+    Note: v2 — 이전 버전(단일 DataFrame 반환)과 캐시 키 분리.
     """
     if end < start:
         return pd.DataFrame(), [{"error": "end < start"}]

@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from src.config import render_sidebar
-from src.data.gdelt import daily_volume, escalation_days, fetch_articles
+from src.data.gdelt import daily_volume, escalation_days, fetch_articles_v2
 from src.utils.i18n import t
 from src.viz.charts import COLOR_PRIMARY, COLOR_SECONDARY
 
@@ -51,7 +51,14 @@ def main():
         max_per_day = st.number_input("하루당 최대 노출 기사", 1, 20, 5)
 
     with st.spinner(t("loading")):
-        df, diag = fetch_articles(cfg.event_date, cfg.end_date, include_korean=include_kor)
+        result = fetch_articles_v2(cfg.event_date, cfg.end_date, include_korean=include_kor)
+
+    # 방어 가드: 캐시 등 어떤 이유로든 (df, diag) 2-tuple이 아닌 값이 오면 안전하게 처리
+    if isinstance(result, tuple) and len(result) == 2:
+        df, diag = result
+    else:
+        df = result if hasattr(result, "shape") else pd.DataFrame()
+        diag = [{"warn": "stale cache value detected — '데이터 새로고침'을 눌러주세요."}]
 
     if df.empty:
         st.warning("기사를 가져오지 못했습니다. 아래 진단 정보로 원인을 확인하세요.")
