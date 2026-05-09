@@ -50,7 +50,7 @@ def main():
     with col3:
         max_per_day = st.number_input("하루당 최대 노출 기사", 1, 20, 5)
 
-    with st.spinner(t("loading")):
+    with st.spinner("GDELT 호출 중 (5초/요청 제한 준수, 첫 로드 약 30초). 결과는 30분 캐시됩니다..."):
         result = fetch_articles_v2(cfg.event_date, cfg.end_date, include_korean=include_kor)
 
     # 방어 가드: 캐시 등 어떤 이유로든 (df, diag) 2-tuple이 아닌 값이 오면 안전하게 처리
