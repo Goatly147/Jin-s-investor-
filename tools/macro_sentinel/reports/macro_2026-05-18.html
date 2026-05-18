@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Macro Sentinel - 2026-05-18</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#0f172a; color:#e2e8f0; font-family:'Segoe UI',system-ui,-apple-system,sans-serif; }
+.container { max-width:1100px; margin:0 auto; padding:24px; }
+.header { text-align:center; margin-bottom:32px; }
+.header h1 { font-size:1.8em; color:#f8fafc; margin-bottom:8px; }
+.header .date { color:#64748b; font-size:1em; }
+.overall-box { background:linear-gradient(135deg, #f3f4f622, #f3f4f611); border:2px solid #6b728044; border-radius:16px; padding:24px; text-align:center; margin-bottom:32px; }
+.overall-box .signal { font-size:2em; font-weight:700; color:#6b7280; }
+.overall-box .desc { color:#94a3b8; margin-top:8px; }
+.stats { display:flex; gap:16px; justify-content:center; margin-bottom:32px; flex-wrap:wrap; }
+.stat-card { background:#1e293b; border-radius:12px; padding:16px 24px; text-align:center; min-width:120px; }
+.stat-card .num { font-size:1.5em; font-weight:700; }
+.stat-card .label { color:#64748b; font-size:0.85em; margin-top:4px; }
+table { width:100%; border-collapse:collapse; background:#1e293b; border-radius:12px; overflow:hidden; margin-bottom:24px; }
+table th { background:#0f172a; color:#64748b; padding:12px 16px; text-align:left; font-size:0.85em; text-transform:uppercase; letter-spacing:1px; }
+table td { border-bottom:1px solid #334155; }
+table tr:last-child td { border-bottom:none; }
+.section-title { color:#f8fafc; font-size:1.3em; font-weight:600; margin:32px 0 16px; }
+.fg-box { background:#1e293b; border-radius:12px; padding:24px; text-align:center; margin-bottom:24px; }
+.fg-score { font-size:3em; font-weight:700; }
+.fg-label { color:#64748b; font-size:1em; margin-top:4px; }
+.footer { text-align:center; color:#475569; font-size:0.8em; margin-top:40px; padding-top:20px; border-top:1px solid #1e293b; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>MACRO SENTINEL</h1>
+<div class="date">2026-05-18 Daily Market Sentiment Report</div>
+</div>
+
+<div class="overall-box">
+<div class="signal">NEUTRAL</div>
+<div class="desc">Neutral: No dominant trend signal</div>
+</div>
+
+<div class="stats">
+<div class="stat-card"><div class="num" style="color:#10b981">4</div><div class="label">Bullish</div></div>
+<div class="stat-card"><div class="num" style="color:#f59e0b">2</div><div class="label">Caution</div></div>
+<div class="stat-card"><div class="num" style="color:#ef4444">4</div><div class="label">Bearish</div></div>
+<div class="stat-card"><div class="num" style="color:#6b7280">1</div><div class="label">Neutral</div></div>
+</div>
+
+<div class="section-title">Indicator Dashboard</div>
+<table>
+<thead><tr>
+<th style="width:200px;">Indicator</th>
+<th style="width:120px;">Signal</th>
+<th>Analysis</th>
+</tr></thead>
+<tbody>
+<tr><td colspan="3" style="background:#1e293b;color:#94a3b8;font-weight:600;padding:12px 16px;font-size:0.85em;text-transform:uppercase;letter-spacing:1px;">Liquidity & Reserves</td></tr>
+<tr>
+<td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">TGA</td>
+<td style="padding:12px 16px;"><span style="background:#d1fae5;color:#10b981;padding:4px 12px;border-radius:12px;font-weight:600;font-size:0.85em;">BULLISH</span></td>
+<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">TGA drawdown $-167B (-16.6%) - liquidity injection into market</td>
+</tr>
+<tr>
+<td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">WRESBAL</td>
+<td style="padding:12px 16px;"><span style="background:#d1fae5;color:#10b981;padding:4px 12px;border-radius:12px;font-weight:600;font-size:0.85em;">BULLISH</span></td>
+<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">Reserve velocity maintained (+0.0B, ratio: 1.48)</td>
+</tr>
+<tr>
+<td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">RRP</td>
+<td style="padding:12px 16px;"><span style="background:#fee2e2;color:#ef4444;padding:4px 12px;border-radius:12px;font-weight:600;font-size:0.85em;">BEARISH</span></td>
+<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">RRP surging (+131%) - capital seeking safe haven, $0B</td>
+</tr>
+<tr>
+<td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">Primary Dealer</td>
+<td style="padding:12px 16px;"><span style="background:#fef3c7;color:#f59e0b;padding:4px 12px;border-radius:12px;font-weight:600;font-size:0.85em;">CAUTION</span></td>
+<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">Dealer positioning declining: $500B (-8.5% 4w, -3.1% 12w)</td>
+</tr>
+<tr><td colspan="3" style="background:#1e293b;color:#94a3b8;font-weight:600;padding:12px 16px;font-size:0.85em;text-transform:uppercase;letter-spacing:1px;">Financial Stress</td></tr>
+<tr>
+<td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">STLFSI4</td>
+<td style="padding:12px 16px;"><span style="background:#d1fae5;color:#10b981;padding:4px 12px;border-radius:12px;font-weight:600;font-size:0.85em;">BULLISH</span></td>
+<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">Low stress (-0.76)</td>
+</tr>
+<tr><td colspan="3" style="background:#1e293b;color:#94a3b8;font-weight:600;padding:12px 16px;font-size:0.85em;text-transform:uppercase;letter-spacing:1px;">Capital Flow & Rotation</td></tr>
+<tr>
+<td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">DXY Quality</td>
+<td style="padding:12px 16px;"><span style="background:#f3f4f6;color:#6b7280;padding:4px 12px;border-radius:12px;font-weight:600;font-size:0.85em;">NEUTRAL</span></td>
+<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">DXY stable (+0.9%), VIX: 18.4</td>
+</tr>
+<tr>
+<td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">Sector Rotation</td>
+<td style="padding:12px 16px;"><span style="background:#fee2e2;color:#ef4444;padding:4px 12px;border-radius:12px;font-weight:600;font-size:0.85em;">BEARISH</span></td>
+<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">Risk-off rotation: Staples +5.0% vs Luxury -12.6% - defensive positioning</td>
+</tr>
+<tr><td colspan="3" style="background:#1e293b;color:#94a3b8;font-weight:600;padding:12px 16px;font-size:0.85em;text-transform:uppercase;letter-spacing:1px;">System Trust</td></tr>
+<tr>
+<td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">SOFR-IORB</td>
+<td style="padding:12px 16px;"><span style="background:#fee2e2;color:#ef4444;padding:4px 12px;border-radius:12px;font-weight:600;font-size:0.85em;">BEARISH</span></td>
+<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">SOFR-IORB spread elevated (-0.100%)</td>
+</tr>
+<tr><td colspan="3" style="background:#1e293b;color:#94a3b8;font-weight:600;padding:12px 16px;font-size:0.85em;text-transform:uppercase;letter-spacing:1px;">Recession Indicators</td></tr>
+<tr>
+<td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">Yield Curve</td>
+<td style="padding:12px 16px;"><span style="background:#d1fae5;color:#10b981;padding:4px 12px;border-radius:12px;font-weight:600;font-size:0.85em;">BULLISH</span></td>
+<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">Normal yield curve (0.54%)</td>
+</tr>
+<tr><td colspan="3" style="background:#1e293b;color:#94a3b8;font-weight:600;padding:12px 16px;font-size:0.85em;text-transform:uppercase;letter-spacing:1px;">Investor Sentiment</td></tr>
+<tr>
+<td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">Fear & Greed</td>
+<td style="padding:12px 16px;"><span style="background:#fef3c7;color:#f59e0b;padding:4px 12px;border-radius:12px;font-weight:600;font-size:0.85em;">CAUTION</span></td>
+<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">Greed (62.8) - market optimism elevated</td>
+</tr>
+<tr>
+<td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">Insider Trading</td>
+<td style="padding:12px 16px;"><span style="background:#fee2e2;color:#ef4444;padding:4px 12px;border-radius:12px;font-weight:600;font-size:0.85em;">BEARISH</span></td>
+<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">Heavy insider selling: 137 sells vs 3 buys across AAPL, MSFT, GOOGL, META, AMZN, NVDA, TSLA</td>
+</tr>
+
+</tbody>
+</table>
+
+<div class="section-title">Fear & Greed Index</div>
+<div class="fg-box">
+<div class="fg-score" style="color:#ef4444">62.8</div>
+<div class="fg-label">greed</div>
+</div>
+
+<div class="section-title">Big Tech Insider Trading (Last 3 Months)</div>
+<table>
+<thead><tr>
+<th>Ticker</th>
+<th>Buys</th>
+<th>Sells</th>
+<th>Net Shares</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="padding:8px 12px;color:#e2e8f0;font-weight:600;">AAPL</td>
+<td style="padding:8px 12px;color:#10b981;">0</td>
+<td style="padding:8px 12px;color:#ef4444;">20</td>
+<td style="padding:8px 12px;color:#ef4444;font-weight:600;">-1,193,655</td>
+</tr>
+<tr>
+<td style="padding:8px 12px;color:#e2e8f0;font-weight:600;">MSFT</td>
+<td style="padding:8px 12px;color:#10b981;">2</td>
+<td style="padding:8px 12px;color:#ef4444;">18</td>
+<td style="padding:8px 12px;color:#ef4444;font-weight:600;">-361,481</td>
+</tr>
+<tr>
+<td style="padding:8px 12px;color:#e2e8f0;font-weight:600;">GOOGL</td>
+<td style="padding:8px 12px;color:#10b981;">0</td>
+<td style="padding:8px 12px;color:#ef4444;">20</td>
+<td style="padding:8px 12px;color:#ef4444;font-weight:600;">-274,671</td>
+</tr>
+<tr>
+<td style="padding:8px 12px;color:#e2e8f0;font-weight:600;">META</td>
+<td style="padding:8px 12px;color:#10b981;">0</td>
+<td style="padding:8px 12px;color:#ef4444;">20</td>
+<td style="padding:8px 12px;color:#ef4444;font-weight:600;">-166,770</td>
+</tr>
+<tr>
+<td style="padding:8px 12px;color:#e2e8f0;font-weight:600;">AMZN</td>
+<td style="padding:8px 12px;color:#10b981;">0</td>
+<td style="padding:8px 12px;color:#ef4444;">20</td>
+<td style="padding:8px 12px;color:#ef4444;font-weight:600;">-253,303</td>
+</tr>
+<tr>
+<td style="padding:8px 12px;color:#e2e8f0;font-weight:600;">NVDA</td>
+<td style="padding:8px 12px;color:#10b981;">0</td>
+<td style="padding:8px 12px;color:#ef4444;">20</td>
+<td style="padding:8px 12px;color:#ef4444;font-weight:600;">-2,707,170</td>
+</tr>
+<tr>
+<td style="padding:8px 12px;color:#e2e8f0;font-weight:600;">TSLA</td>
+<td style="padding:8px 12px;color:#10b981;">1</td>
+<td style="padding:8px 12px;color:#ef4444;">19</td>
+<td style="padding:8px 12px;color:#10b981;font-weight:600;">+1,560,731</td>
+</tr>
+
+</tbody>
+</table>
+
+<div class="footer">
+Generated by Macro Sentinel | Data: FRED, CNN, OpenInsider, Yahoo Finance<br>
+Note: Weekly/quarterly indicators show latest available data. Signals are algorithmic - use as reference alongside your own analysis.
+</div>
+</div>
+</body>
+</html>
