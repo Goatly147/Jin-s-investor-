@@ -11,8 +11,8 @@ body { background:#0f172a; color:#e2e8f0; font-family:'Segoe UI',system-ui,-appl
 .header { text-align:center; margin-bottom:32px; }
 .header h1 { font-size:1.8em; color:#f8fafc; margin-bottom:8px; }
 .header .date { color:#64748b; font-size:1em; }
-.overall-box { background:linear-gradient(135deg, #f3f4f622, #f3f4f611); border:2px solid #6b728044; border-radius:16px; padding:24px; text-align:center; margin-bottom:32px; }
-.overall-box .signal { font-size:2em; font-weight:700; color:#6b7280; }
+.overall-box { background:linear-gradient(135deg, #d1fae522, #d1fae511); border:2px solid #10b98144; border-radius:16px; padding:24px; text-align:center; margin-bottom:32px; }
+.overall-box .signal { font-size:2em; font-weight:700; color:#10b981; }
 .overall-box .desc { color:#94a3b8; margin-top:8px; }
 .stats { display:flex; gap:16px; justify-content:center; margin-bottom:32px; flex-wrap:wrap; }
 .stat-card { background:#1e293b; border-radius:12px; padding:16px 24px; text-align:center; min-width:120px; }
@@ -37,15 +37,15 @@ table tr:last-child td { border-bottom:none; }
 </div>
 
 <div class="overall-box">
-<div class="signal">NEUTRAL</div>
-<div class="desc">Neutral: No dominant trend signal</div>
+<div class="signal">BULLISH</div>
+<div class="desc">Risk-On: Market conditions favor growth assets</div>
 </div>
 
 <div class="stats">
-<div class="stat-card"><div class="num" style="color:#10b981">5</div><div class="label">Bullish</div></div>
+<div class="stat-card"><div class="num" style="color:#10b981">6</div><div class="label">Bullish</div></div>
 <div class="stat-card"><div class="num" style="color:#f59e0b">2</div><div class="label">Caution</div></div>
 <div class="stat-card"><div class="num" style="color:#ef4444">2</div><div class="label">Bearish</div></div>
-<div class="stat-card"><div class="num" style="color:#6b7280">2</div><div class="label">Neutral</div></div>
+<div class="stat-card"><div class="num" style="color:#6b7280">1</div><div class="label">Neutral</div></div>
 </div>
 
 <div class="section-title">Indicator Dashboard</div>
@@ -70,7 +70,7 @@ table tr:last-child td { border-bottom:none; }
 <tr>
 <td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">RRP</td>
 <td style="padding:12px 16px;"><span style="background:#fee2e2;color:#ef4444;padding:4px 12px;border-radius:12px;font-weight:600;font-size:0.85em;">BEARISH</span></td>
-<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">RRP surging (+31%) - capital seeking safe haven, $0B</td>
+<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">RRP surging (+24%) - capital seeking safe haven, $0B</td>
 </tr>
 <tr>
 <td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">Primary Dealer</td>
@@ -87,12 +87,12 @@ table tr:last-child td { border-bottom:none; }
 <tr>
 <td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">DXY Quality</td>
 <td style="padding:12px 16px;"><span style="background:#f3f4f6;color:#6b7280;padding:4px 12px;border-radius:12px;font-weight:600;font-size:0.85em;">NEUTRAL</span></td>
-<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">DXY stable (+1.2%), VIX: 14.8</td>
+<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">DXY stable (+1.2%), VIX: 14.9</td>
 </tr>
 <tr>
 <td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">Sector Rotation</td>
-<td style="padding:12px 16px;"><span style="background:#f3f4f6;color:#6b7280;padding:4px 12px;border-radius:12px;font-weight:600;font-size:0.85em;">NEUTRAL</span></td>
-<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">Staples +nan% vs Luxury +nan%</td>
+<td style="padding:12px 16px;"><span style="background:#d1fae5;color:#10b981;padding:4px 12px;border-radius:12px;font-weight:600;font-size:0.85em;">BULLISH</span></td>
+<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">Risk-on rotation: Staples -4.4% vs Luxury +20.4% - capital moving to growth</td>
 </tr>
 <tr><td colspan="3" style="background:#1e293b;color:#94a3b8;font-weight:600;padding:12px 16px;font-size:0.85em;text-transform:uppercase;letter-spacing:1px;">System Trust</td></tr>
 <tr>
@@ -104,13 +104,13 @@ table tr:last-child td { border-bottom:none; }
 <tr>
 <td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">Yield Curve</td>
 <td style="padding:12px 16px;"><span style="background:#d1fae5;color:#10b981;padding:4px 12px;border-radius:12px;font-weight:600;font-size:0.85em;">BULLISH</span></td>
-<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">Normal yield curve (0.20%)</td>
+<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">Normal yield curve (0.25%)</td>
 </tr>
 <tr><td colspan="3" style="background:#1e293b;color:#94a3b8;font-weight:600;padding:12px 16px;font-size:0.85em;text-transform:uppercase;letter-spacing:1px;">Investor Sentiment</td></tr>
 <tr>
 <td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">Fear & Greed</td>
 <td style="padding:12px 16px;"><span style="background:#fef3c7;color:#f59e0b;padding:4px 12px;border-radius:12px;font-weight:600;font-size:0.85em;">CAUTION</span></td>
-<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">Fear (33.7) - market anxiety</td>
+<td style="padding:12px 16px;color:#94a3b8;font-size:0.9em;">Fear (35.3) - market anxiety</td>
 </tr>
 <tr>
 <td style="padding:12px 16px;font-weight:500;color:#e2e8f0;">Insider Trading</td>
@@ -123,7 +123,7 @@ table tr:last-child td { border-bottom:none; }
 
 <div class="section-title">Fear & Greed Index</div>
 <div class="fg-box">
-<div class="fg-score" style="color:#10b981">33.7</div>
+<div class="fg-score" style="color:#10b981">35.3</div>
 <div class="fg-label">fear</div>
 </div>
 
@@ -170,7 +170,7 @@ table tr:last-child td { border-bottom:none; }
 <td style="padding:8px 12px;color:#e2e8f0;font-weight:600;">NVDA</td>
 <td style="padding:8px 12px;color:#10b981;">0</td>
 <td style="padding:8px 12px;color:#ef4444;">20</td>
-<td style="padding:8px 12px;color:#ef4444;font-weight:600;">-6,323,795</td>
+<td style="padding:8px 12px;color:#ef4444;font-weight:600;">-7,609,795</td>
 </tr>
 <tr>
 <td style="padding:8px 12px;color:#e2e8f0;font-weight:600;">TSLA</td>
